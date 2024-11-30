@@ -1,0 +1,47 @@
+cmake_minimum_required(VERSION 3.14)
+project(BalagurFate3)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(game_lib
+    src/NPC.cpp
+    src/Orc.cpp
+    src/Druid.cpp
+    src/Squirrel.cpp
+    src/NPCFactory.cpp
+    src/BattleVisitor.cpp
+    src/ConsoleObserver.cpp
+    src/FileObserver.cpp
+    src/DungeonEditor.cpp
+)
+
+target_include_directories(game_lib PUBLIC include)
+
+add_executable(game src/main.cpp)
+target_link_libraries(game game_lib)
+
+enable_testing()
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.13.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+add_executable(game_tests
+    tests/test_main.cpp
+    tests/npc_tests.cpp
+    tests/battle_tests.cpp
+    tests/factory_tests.cpp
+)
+
+target_link_libraries(game_tests
+    PRIVATE
+    game_lib
+    gtest
+    gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(game_tests) 
